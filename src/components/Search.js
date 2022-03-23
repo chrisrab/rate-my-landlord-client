@@ -1,48 +1,48 @@
-import { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
-import { HiStar } from 'react-icons/hi'
+import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { HiStar } from 'react-icons/hi';
 
 const Search = () => {
-  const [records, setRecords] = useState([])
-  const [fetched, setFetched] = useState(false)
+  const [records, setRecords] = useState([]);
+  const [fetched, setFetched] = useState(false);
   // const [hidden, setHidden] = useState('none')
 
   useEffect(() => {
     async function getRecords() {
-      const response = await fetch(`http://localhost:5000/landlord/`)
+      const response = await fetch(`http://localhost:5000/landlord/`);
 
       if (!response.ok) {
-        const message = `An error occurred: ${response.statusText}`
-        window.alert(message)
-        return
+        const message = `An error occurred: ${response.statusText}`;
+        window.alert(message);
+        return;
       }
 
-      const records = await response.json()
+      const records = await response.json();
 
       if (Array.isArray(records)) {
-        setRecords(records)
+        setRecords(records);
       } else {
-        setRecords([records])
+        setRecords([records]);
       }
 
-      setFetched(true)
+      setFetched(true);
     }
 
-    getRecords()
+    getRecords();
 
-    return
-  }, [records.length])
+    return;
+  }, [records.length]);
 
-  const average = (array) => array.reduce((a, b) => a + b) / array.length
+  const average = (array) => array.reduce((a, b) => a + b) / array.length;
 
   const getReviewScore = (reviews) => {
-    console.log(reviews)
-    let arrayScore = []
+    console.log(reviews);
+    let arrayScore = [];
     reviews.forEach((element) => {
-      arrayScore.push(element.score)
-    })
-    return average(arrayScore)
-  }
+      arrayScore.push(element.score);
+    });
+    return average(arrayScore);
+  };
 
   // const changeHidden = () => {
   //   if (hidden === 'none') {
@@ -67,7 +67,7 @@ const Search = () => {
   // console.log(getReviews(records[0].reviews))
 
   if (!fetched) {
-    return <div></div>
+    return <div></div>;
   } else {
     return (
       <div>
@@ -76,7 +76,10 @@ const Search = () => {
         </div>
         {records.map((record) => (
           <div>
-            <Link to={`/${record._id}`} style={{ textDecoration: 'none', color: 'black' }}>
+            <Link
+              to={`/${record._id}`}
+              style={{ textDecoration: 'none', color: 'black' }}
+            >
               <div className="record-card" key={record._id}>
                 <p className="card-text">{record.address}</p>
                 <p className="card-text">{record.postcode}</p>
@@ -101,8 +104,8 @@ const Search = () => {
           </div>
         ))}
       </div>
-    )
+    );
   }
-}
+};
 
-export default Search
+export default Search;
