@@ -5,7 +5,8 @@ import { HiStar } from 'react-icons/hi';
 const Search = () => {
   const [records, setRecords] = useState([]);
   const [fetched, setFetched] = useState(false);
-  // const [hidden, setHidden] = useState('none')
+  const [searchPosted, setSearchPosted] = useState(false);
+  const [search, setSearch] = useState('');
 
   useEffect(() => {
     async function getRecords() {
@@ -26,23 +27,46 @@ const Search = () => {
       }
 
       setFetched(true);
+      setSearchPosted(false);
     }
 
     getRecords();
 
     return;
-  }, [records.length]);
+  }, [searchPosted, records.length]);
 
-  const average = (array) => array.reduce((a, b) => a + b) / array.length;
-
-  const getReviewScore = (reviews) => {
-    console.log(reviews);
-    let arrayScore = [];
-    reviews.forEach((element) => {
-      arrayScore.push(element.score);
+  //Post search param to backend
+  async function postSearch() {
+    const response = await fetch(`http://localhost:5000/landlord/search`, {
+      method: 'POST',
+      body: JSON.stringify({ search: search }),
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+      },
     });
-    return average(arrayScore);
-  };
+
+    // if (!response.ok) {
+    //   const message = `An error occurred: ${response.statusText}`;
+    //   window.alert(message);
+    //   return;
+    // }
+
+    // return response.json();
+  }
+
+  console.log(searchPosted);
+
+  // const average = (array) => array.reduce((a, b) => a + b) / array.length;
+
+  // const getReviewScore = (reviews) => {
+  //   console.log(reviews);
+  //   let arrayScore = [];
+  //   reviews.forEach((element) => {
+  //     arrayScore.push(element.score);
+  //   });
+  //   return average(arrayScore);
+  // };
 
   // const changeHidden = () => {
   //   if (hidden === 'none') {
@@ -66,28 +90,39 @@ const Search = () => {
 
   // console.log(getReviews(records[0].reviews))
 
+  const handleSearch = () => {
+    postSearch();
+    setSearchPosted(true);
+  };
+
+  const handleSearchChange = (event) => {
+    setSearch(event.target.value);
+  };
+
   if (!fetched) {
     return <div></div>;
   } else {
     return (
       <div>
         <div>
-          <input type="text"></input>
+          <input type="text" onChange={handleSearchChange}></input>{' '}
+          <button onClick={handleSearch}>Search</button>
         </div>
         {records.map((record) => (
-          <div>
+          <div key={record._id}>
             <Link
               to={`/${record._id}`}
               style={{ textDecoration: 'none', color: 'black' }}
             >
-              <div className="record-card" key={record._id}>
+              <div className="record-card">
                 <p className="card-text">{record.address}</p>
                 <p className="card-text">{record.postcode}</p>
                 <p className="card-text">{record.area}</p>
-                <p className="card-text">
+                <p className="card-text">{record.landlord}</p>
+                {/* <p className="card-text">
                   <HiStar style={{ fontSize: '16px' }} />
                   {getReviewScore(record.reviews)}
-                </p>
+                </p> */}
               </div>
             </Link>
             {/* <div>

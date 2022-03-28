@@ -1,43 +1,43 @@
-import { useParams } from 'react-router-dom'
-import { useState, useEffect } from 'react'
-import { HiStar } from 'react-icons/hi'
+import { useParams } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { HiStar } from 'react-icons/hi';
 
 const AddressPage = () => {
-  const { id } = useParams()
-  const [fetched, setFetched] = useState(false)
-  const [record, setRecord] = useState([])
-  const [sliceNumber, setSliceNumber] = useState(5)
+  const { id } = useParams();
+  const [fetched, setFetched] = useState(false);
+  const [record, setRecord] = useState([]);
+  const [sliceNumber, setSliceNumber] = useState(5);
 
   useEffect(() => {
     async function getRecord() {
-      const response = await fetch(`http://localhost:5000/landlord/${id}`)
+      const response = await fetch(`http://localhost:5000/landlord/${id}`);
 
       if (!response.ok) {
-        const message = `An error occurred: ${response.statusText}`
-        window.alert(message)
-        return
+        const message = `An error occurred: ${response.statusText}`;
+        window.alert(message);
+        return;
       }
 
-      const record = await response.json()
-      setRecord(record)
-      setFetched(true)
+      const record = await response.json();
+      setRecord(record);
+      setFetched(true);
     }
 
-    getRecord()
+    getRecord();
 
-    return
-  }, [record.length])
+    return;
+  }, [record.length]);
 
   const changeSlice = () => {
-    setSliceNumber(sliceNumber + 10)
-  }
+    setSliceNumber(sliceNumber + 10);
+  };
 
-  console.log(id)
-  console.log(record)
-  console.log(sliceNumber)
+  console.log(id);
+  console.log(record);
+  console.log(sliceNumber);
 
   if (!fetched) {
-    return <div></div>
+    return <div></div>;
   } else {
     return (
       <div className="page-container">
@@ -46,7 +46,7 @@ const AddressPage = () => {
         <h1>pictures</h1>
         <button>Add a Review</button>
         <h3>Most Recent Reviews</h3>
-        <div>
+        {/* <div>
           {record.reviews.slice(0, sliceNumber).map((review) => (
             <p>
               <span style={{ fontWeight: '500' }}>{review.username}</span> says: "{review.review}"{' '}
@@ -54,11 +54,11 @@ const AddressPage = () => {
               {review.score}
             </p>
           ))}
-        </div>
+        </div> */}
         <button onClick={changeSlice}>Show More Reviews</button>
       </div>
-    )
+    );
   }
-}
+};
 
-export default AddressPage
+export default AddressPage;
