@@ -31,6 +31,7 @@ const AddAddress = () => {
       postcode: postcode,
       area: area,
       landlord: landlord,
+      reviews: [],
     }).then((data) => {
       console.log(data);
     });

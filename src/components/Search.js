@@ -8,6 +8,7 @@ const Search = () => {
   const [searchPosted, setSearchPosted] = useState(false);
   const [search, setSearch] = useState('');
 
+  // Get records from server and update when search is clicked
   useEffect(() => {
     async function getRecords() {
       const response = await fetch(`http://localhost:5000/landlord/`);
@@ -46,16 +47,14 @@ const Search = () => {
       },
     });
 
-    // if (!response.ok) {
-    //   const message = `An error occurred: ${response.statusText}`;
-    //   window.alert(message);
-    //   return;
-    // }
+    if (!response.ok) {
+      const message = `An error occurred: ${response.statusText}`;
+      window.alert(message);
+      return;
+    }
 
     // return response.json();
   }
-
-  console.log(searchPosted);
 
   // const average = (array) => array.reduce((a, b) => a + b) / array.length;
 
@@ -99,17 +98,33 @@ const Search = () => {
     setSearch(event.target.value);
   };
 
+  const handleKeyDown = (event) => {
+    if (event.key === 'Enter') {
+      handleSearch();
+    }
+  };
+
   if (!fetched) {
     return <div></div>;
   } else {
     return (
       <div>
-        <div>
-          <input type="text" onChange={handleSearchChange}></input>{' '}
-          <button onClick={handleSearch}>Search</button>
+        <div className="search-container">
+          <h2>Please enter the first line of the address or the road name</h2>
+          <div className="input-container">
+            <input
+              className="search-input"
+              type="text"
+              onChange={handleSearchChange}
+              onKeyDown={handleKeyDown}
+            ></input>{' '}
+            <button className="search-btn" onClick={handleSearch}>
+              Search
+            </button>
+          </div>
         </div>
         {records.map((record) => (
-          <div key={record._id}>
+          <div key={record._id} className="result-container">
             <Link
               to={`/${record._id}`}
               style={{ textDecoration: 'none', color: 'black' }}
