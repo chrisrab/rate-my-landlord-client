@@ -35,6 +35,7 @@ const Search = () => {
 
     return;
   }, [searchPosted, records.length]);
+  // }, [records.length]);
 
   //Post search param to backend
   async function postSearch() {

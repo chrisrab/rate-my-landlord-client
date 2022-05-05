@@ -19,7 +19,6 @@ const AddressPage = () => {
   const [file, setFile] = useState('');
   const [previewSource, setPreviewSource] = useState('');
   const [currentPhoto, setCurrentPhoto] = useState('');
-  const [photoCounter, setPhotoCounter] = useState(0);
 
   //get individual address
   useEffect(() => {
@@ -35,13 +34,13 @@ const AddressPage = () => {
       const record = await response.json();
       setRecord(record);
       setFetched(true);
-      setCurrentPhoto(record.photos[photoCounter]);
+      setCurrentPhoto(record.photos[0]);
     }
 
     getRecord();
 
     return;
-  }, [record.length, photoCounter]);
+  }, [record.length]);
 
   //Create cloudinary instance
   const cld = new Cloudinary({
@@ -77,21 +76,6 @@ const AddressPage = () => {
     return response.json();
   }
 
-  // const uploadImage = async (base64EncodedImage, address) => {
-  //   try {
-  //     await fetch(`http://localhost:5000/landlord/upload`, {
-  //       method: 'POST',
-  //       body: JSON.stringify({
-  //         data: base64EncodedImage,
-  //         // address: record.address,
-  //       }),
-  //       headers: { 'Content-type': 'application/json' },
-  //     });
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
-
   const changeSlice = () => {
     setSliceNumber(sliceNumber + 10);
   };
@@ -120,21 +104,12 @@ const AddressPage = () => {
     setDateMovedOut(event.target.value);
   };
 
-  const handleAddReview = (
-    username,
-    review,
-    score,
-    dateMovedOut,
-    base64EncodedImage
-  ) => {
+  const handleAddReview = (username, review, score, dateMovedOut) => {
     const newReview = {
-      photos: base64EncodedImage,
-      review: {
-        username: username,
-        review: review,
-        score: score,
-        dateMovedOut: dateMovedOut,
-      },
+      username: username,
+      review: review,
+      score: score,
+      dateMovedOut: dateMovedOut,
     };
 
     updateRecord(newReview);
@@ -157,19 +132,26 @@ const AddressPage = () => {
   const handleSubmitFile = (event) => {
     event.preventDefault();
     if (!previewSource) return;
-    return;
+    uploadImage(previewSource);
   };
 
-  const addPhotoCounter = () => {
-    setPhotoCounter(photoCounter + 1);
-  };
-
-  const subtractPhotoCounter = () => {
-    setPhotoCounter(photoCounter - 1);
+  const uploadImage = async (base64EncodedImage, address) => {
+    try {
+      await fetch(`http://localhost:5000/landlord/upload`, {
+        method: 'POST',
+        body: JSON.stringify({
+          data: base64EncodedImage,
+          address: record.address,
+        }),
+        headers: { 'Content-type': 'application/json' },
+      });
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   if (fetched) {
-    console.log(currentPhoto);
+    console.log(record.photos[0]);
   }
 
   if (!fetched) {
@@ -181,17 +163,9 @@ const AddressPage = () => {
         <h2>{record.area}</h2>
         <h2>{record.postcode}</h2>
         <div className="pictures-container">
-          <p onClick={subtractPhotoCounter} className="prev">
-            &#10094;
-          </p>
           <AdvancedImage cldImg={myImage} />
-          <p onClick={addPhotoCounter} className="next">
-            &#10095;
-          </p>
         </div>
-        <button onClick={changeDisplay} className="add-rev-btn">
-          Add a Review
-        </button>
+        <button onClick={changeDisplay}>Add a Review</button>
         <div style={{ display: display }}>
           <form onSubmit={handleSubmitFile}>
             <div>
@@ -205,7 +179,7 @@ const AddressPage = () => {
                 ></input>
               </label>
             </div>
-            <div className="input-item">
+            <div>
               <label>
                 {' '}
                 Review:{' '}
@@ -213,11 +187,10 @@ const AddressPage = () => {
                   type={'text'}
                   required
                   onChange={handleReviewChange}
-                  className="review-input"
                 ></input>
               </label>
             </div>
-            <div className="input-item">
+            <div>
               <label>
                 {' '}
                 Score:{' '}
@@ -230,7 +203,7 @@ const AddressPage = () => {
                 ></input>
               </label>
             </div>
-            <div className="input-item">
+            <div>
               <label>
                 {' '}
                 Date Moved Out:{' '}
@@ -240,7 +213,7 @@ const AddressPage = () => {
                 ></input>
               </label>
             </div>
-            <div className="input-item">
+            <div>
               <label>
                 {' '}
                 Pictures:{' '}
@@ -254,15 +227,8 @@ const AddressPage = () => {
             </div>
             <button
               onClick={() =>
-                handleAddReview(
-                  username,
-                  review,
-                  score,
-                  dateMovedOut,
-                  previewSource
-                )
+                handleAddReview(username, review, score, dateMovedOut)
               }
-              className="submit-btn"
               type="submit"
             >
               Submit Review
@@ -282,7 +248,7 @@ const AddressPage = () => {
             <p key={review.username}>
               <span style={{ fontWeight: '500' }}>{review.username}</span> says:
               "{review.review}" {review.score}
-              <HiStar style={{ fontSize: '16px', color: 'gold' }} />
+              <HiStar style={{ fontSize: '16px' }} />
             </p>
           ))}
         </div>
