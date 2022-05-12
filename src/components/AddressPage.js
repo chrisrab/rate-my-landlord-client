@@ -16,7 +16,6 @@ const AddressPage = () => {
   const [score, setScore] = useState(null);
   const [dateMovedOut, setDateMovedOut] = useState(null);
   const [fileInput, setFileInput] = useState('');
-  const [file, setFile] = useState('');
   const [previewSource, setPreviewSource] = useState('');
   const [currentPhoto, setCurrentPhoto] = useState('');
   const [photoCounter, setPhotoCounter] = useState(0);
@@ -35,7 +34,9 @@ const AddressPage = () => {
       const record = await response.json();
       setRecord(record);
       setFetched(true);
-      setCurrentPhoto(record.photos[photoCounter]);
+      if (record.photos) {
+        setCurrentPhoto(record.photos[photoCounter]);
+      }
     }
 
     getRecord();
@@ -161,11 +162,15 @@ const AddressPage = () => {
   };
 
   const addPhotoCounter = () => {
-    setPhotoCounter(photoCounter + 1);
+    if (photoCounter < record.photos.length - 1) {
+      setPhotoCounter(photoCounter + 1);
+    }
   };
 
   const subtractPhotoCounter = () => {
-    setPhotoCounter(photoCounter - 1);
+    if (photoCounter > 0) {
+      setPhotoCounter(photoCounter - 1);
+    }
   };
 
   if (fetched) {
@@ -180,15 +185,23 @@ const AddressPage = () => {
         <h2>{record.address}</h2>
         <h2>{record.area}</h2>
         <h2>{record.postcode}</h2>
-        <div className="pictures-container">
-          <p onClick={subtractPhotoCounter} className="prev">
-            &#10094;
-          </p>
-          <AdvancedImage cldImg={myImage} />
-          <p onClick={addPhotoCounter} className="next">
-            &#10095;
-          </p>
-        </div>
+        {record.photos ? (
+          <div className="pictures-container">
+            <p onClick={subtractPhotoCounter} className="prev">
+              &#10094;
+            </p>
+            <AdvancedImage cldImg={myImage} />
+            <p onClick={addPhotoCounter} className="next">
+              &#10095;
+            </p>
+          </div>
+        ) : (
+          <div>
+            <h2 className="no-pics">
+              No pictures, add a review and attach a picture
+            </h2>
+          </div>
+        )}
         <button onClick={changeDisplay} className="add-rev-btn">
           Add a Review
         </button>
@@ -206,21 +219,24 @@ const AddressPage = () => {
               </label>
             </div>
             <div className="input-item">
-              <label>
+              <label htmlFor="review" className="review-label">
                 {' '}
                 Review:{' '}
-                <input
+                <textarea
                   type={'text'}
                   required
                   onChange={handleReviewChange}
+                  rows={'3'}
+                  cols={'50'}
+                  id="review"
                   className="review-input"
-                ></input>
+                ></textarea>
               </label>
             </div>
             <div className="input-item">
               <label>
                 {' '}
-                Score:{' '}
+                Stars:{' '}
                 <input
                   type={'number'}
                   min={1}
@@ -269,24 +285,32 @@ const AddressPage = () => {
             </button>
           </form>
           {previewSource && (
-            <img
-              src={previewSource}
-              alt="chosen file"
-              style={{ height: '300px' }}
-            />
+            <div className="selected-pics-container">
+              <p>Selected Pictures: </p>
+              <img
+                src={previewSource}
+                alt="chosen file"
+                style={{ height: '300px' }}
+              />
+            </div>
           )}
         </div>
         <h3>Most Recent Reviews</h3>
-        <div>
-          {record.reviews.slice(0, sliceNumber).map((review) => (
-            <p key={review.username}>
-              <span style={{ fontWeight: '500' }}>{review.username}</span> says:
-              "{review.review}" {review.score}
-              <HiStar style={{ fontSize: '16px', color: 'gold' }} />
-            </p>
-          ))}
-        </div>
-        <button onClick={changeSlice}>Show More Reviews</button>
+
+        {record.reviews[0] ? (
+          <div className="review-container">
+            {record.reviews.slice(0, sliceNumber).map((review) => (
+              <p key={review.username}>
+                <span style={{ fontWeight: '700' }}>{review.username}</span>{' '}
+                says: "{review.review}" {review.score}
+                <HiStar style={{ fontSize: '16px', color: 'gold' }} />
+              </p>
+            ))}
+            <button onClick={changeSlice}>Show More Reviews</button>
+          </div>
+        ) : (
+          <h3>No Reviews Yet</h3>
+        )}
       </div>
     );
   }

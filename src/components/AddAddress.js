@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
 async function postRecord(data) {
   const response = await fetch(`http://localhost:5000/landlord/add`, {
@@ -55,23 +55,43 @@ const AddAddress = () => {
   };
 
   return (
-    <div>
-      <div>Add Address</div>
+    <div className="add-address-container">
+      <h2>Add Address</h2>
       <div>
         <p>Address</p>
-        <input type={'text'} onChange={handleAddressChange} required></input>
+        <input
+          className="input"
+          type={'text'}
+          onChange={handleAddressChange}
+          required
+        ></input>
       </div>
       <div>
-        <p>Area</p>
-        <input type={'text'} onChange={handleAreaChange} required></input>
+        <p>City/Town</p>
+        <input
+          className="input"
+          type={'text'}
+          onChange={handleAreaChange}
+          required
+        ></input>
       </div>
       <div>
         <p>Postcode</p>
-        <input type={'text'} onChange={handlePostcodeChange} required></input>
+        <input
+          className="input"
+          type={'text'}
+          onChange={handlePostcodeChange}
+          required
+        ></input>
       </div>
-      <div>
+      <div className="landlord-label">
         <p>Landlord</p>
-        <input type={'text'} onChange={handleLandlordChange} required></input>
+        <input
+          className="input"
+          type={'text'}
+          onChange={handleLandlordChange}
+          required
+        ></input>
       </div>
       <button
         onClick={() => handleAddAddress(address, postcode, area, landlord)}
